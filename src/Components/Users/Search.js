@@ -1,53 +1,47 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import React, {useState, useContext} from 'react';
 
-class Search extends Component {
+import GithubContext from '../../Context/Github/githubContext';
+import AlertContext from '../../Context/Alert/alertContext';
+
+const Search =() =>{
    
-    state={
-        text:''
-    }
-
-
-    onChange = (e) => this.setState({[e.target.name]:e.target.value});
+    const githubContext = useContext(GithubContext);
+    const alertContext = useContext(AlertContext);
+    const [text,setText] = useState('');
+    const onChange = (e) => setText(e.target.value);
     
-    static propTypes={
-            searchUser:PropTypes.func.isRequired,
-            clear:PropTypes.func.isRequired,
-            showClear:PropTypes.bool.isRequired,
-            setAlert:PropTypes.func.isRequired
-    };
+     
 
-    onSubmit =(e) =>{
+    const onSubmit =(e) =>{
         e.preventDefault();
-        if(this.state.text===''){
-            this.props.setAlert(" Please Enter the User ",'light');
+        if(text===''){
+            alertContext.setAlert(" Please Enter the User ",'light');
         }
         else{
-            this.props.searchUser(this.state.text);
-        this.setState({text:''});
+            githubContext.searchUsers(text);
+        setText('');
         }
         
     }
 
-    render (){
-        const {clear,showClear}=this.props;
+  
         return (
                 <div>
-                    <form className="form" onSubmit={this.onSubmit}>
-                        <input type="text" placeholder="Search for Users ..." name="text" value={this.state.text}
-                        onChange={this.onChange}
+                    <form className="form" onSubmit={onSubmit}>
+                        <input type="text" placeholder="Search for Users ..." name="text" value={text}
+                        onChange={onChange}
                         />
                         <input type="submit" className="btn btn-dark btn-block" value="Search" 
-                        
                         />
                     </form>
-                    {showClear &&(
-                    <button className="btn btn-light btn-block " onClick={clear}>Clear</button>)}
+                    {githubContext.users.length>0 &&(
+                    <button className="btn btn-light btn-block " onClick={githubContext.clearUsers}>Clear</button>)}
                 </div>
               );
         
         }
 
-}
+
+
 
 export default Search;

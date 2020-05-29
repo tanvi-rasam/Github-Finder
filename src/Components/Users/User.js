@@ -1,25 +1,26 @@
-import React, {Component, Fragment} from 'react';
+import React, {useEffect, Fragment, useContext} from 'react';
 import Spinner from '../Layouts/Spinner';
-import PropTypes from 'prop-types';
+
 import {Link} from 'react-router-dom';
 import Repos from './../Repos/Repos';
+import GithubContext from '../../Context/Github/githubContext';
 
-class User extends Component {
 
-    componentDidMount(){
-        this.props.getUser(this.props.match.params.login);
-        this.props.getUserRepos(this.props.match.params.login);
-    }
+const User= ({ match}) =>  {
 
-    static propTypes={
-        loading:PropTypes.bool.isRequired,
-        getUser:PropTypes.func.isRequired,
-        user:PropTypes.object.isRequired,
-        getUserRepos:PropTypes.func.isRequired,
-        repos:PropTypes.array.isRequired
-    }
+    const githubContext = useContext(GithubContext);
 
-    render(){
+    const {user, getUser,loading,getUserRepos,repos} =githubContext;
+
+    useEffect( ()=>{
+        getUser(match.params.login);
+        getUserRepos(match.params.login);
+        //eslint-disable-next-line
+    },[] );
+
+    
+
+    
         const{
             name,
             avatar_url,
@@ -34,9 +35,9 @@ class User extends Component {
             public_gist,
             company,
             hireable
-        }= this.props.user;
+        }= user;
 
-        const {loading, repos}=this.props;
+        
 
         if (loading) { return <Spinner />}
 
@@ -109,6 +110,6 @@ class User extends Component {
 
     }
 
-}
+
 
 export default User;
